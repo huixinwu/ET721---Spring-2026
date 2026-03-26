@@ -44,5 +44,34 @@ def get_oneitem(item_id):
     
     return jsonify(item)
 
+# PUT Method
+# UPDATE an item
+@app.route('/items/<item_id>', methods=['PUT'])
+def update_item(item_id):
+    item = items.get(item_id)
+
+    if not item:
+        return render_template('error.html', message="Item not found"), 404
+
+    data = request.get_json()
+
+    # update the item with new data
+    items[item_id] = data
+
+    return render_template('update.html', item_id=item_id, item=data)
+
+# DELETE an item
+@app.route('/items/<item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    item = items.get(item_id)
+
+    if not item:
+        return render_template('error.html', message="Item not found"), 404
+
+    # remove the item
+    deleted_item = items.pop(item_id)
+
+    return render_template('delete.html', item_id=item_id, item=deleted_item)
+
 if __name__ == '__main__':
     app.run(debug=True)
