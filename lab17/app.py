@@ -71,7 +71,36 @@ def upload_image():
     
     return jsonify({'error':'Invalid file type'}), 400
     
+# ---------------------------------------------------- 
+# DELETE AN IMAGE ROUTE
+# ----------------------------------------------------
+@app.route('/delete/<int:image_id>' , methods=['DELETE'])
+def delete_image(image_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    # get filename 
+    cursor.execute("SELECT filename FROM images WHERE id = %s", (image_id,)) 
+    image = cursor.fetchone()
+
+    if not image:
+        cursor.close()
+        conn.close()
+        return jsonify({'error':'Image not found'}), 404
+    
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], image['filename'])
+
+    # delete from database
+    cursor.execute("DELETE FROM images WHERE id = %s", (image_id,))
+    conn.commit() 
+    cursor.close()
+    conn.close()
+
+    # delete file from the folder
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    return jsonify({'message':'Image deleted successfullly'})
 # ---------------------------------------------------- 
 # RUN APP
 # ---------------------------------------------------- 
