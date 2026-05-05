@@ -50,6 +50,14 @@ def dashboard():
     if 'username' in session:
         return render_template('dashboard.html', username = session['username'])
     return redirect(url_for('login'))
+
+# ------------------
+# LOGOUT ROUTING
+# ------------------
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 # ------------------
 # SIGNUP ROUTING
 # ------------------
@@ -76,13 +84,7 @@ def signup():
        
     return render_template('signup.html')
 
-# ------------------
-# LOGOUT ROUTING
-# ------------------
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
+
 # ------------------
 # RUN APP
 # ------------------
